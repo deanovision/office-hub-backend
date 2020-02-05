@@ -7,17 +7,17 @@ const port = process.env.PORT || 5000;
 
 const dbase = process.env.MONGO_DB_CONNECTION;
 
-mongoose.connect(dbase, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true
-});
+// mongoose.connect(dbase, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   useCreateIndex: true
+// });
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function() {
-  console.log("connected to database");
-});
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error:"));
+// db.once("open", function() {
+//   console.log("connected to database");
+// });
 
 function getToken() {
   const { BC_CLIENT_ID, BC_CLIENT_SECRET, REDIRECT_URI } = process.env;
