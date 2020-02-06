@@ -32,7 +32,7 @@ server.get("/get_token", (req, res) => {
           console.log(profile);
           res.status(200).json({
             access_token: token.data.access_token,
-            profile_id: profile.data.accounts[0].id,
+            company_id: profile.data.accounts[0].id,
             profile_data: profile.data
           });
         })
@@ -42,16 +42,46 @@ server.get("/get_token", (req, res) => {
 });
 
 server.post("/get_profile", (req, res) => {
-  const { profile_id, token } = req.body;
-  console.log(profile_id, token);
+  const { company_id, token } = req.body;
+  console.log(company_id, token);
   withAxios(
     "get",
-    `https://basecamp.com/${profile_id}/api/v1/people/me.json`,
+    `https://basecamp.com/${company_id}/api/v1/people/me.json`,
     token
   )
     .then(profile => {
       // console.log(profile.data);
       res.status(200).json(profile.data);
+    })
+    .catch(err => console.log(err));
+});
+
+server.post("/get_projects", (req, res) => {
+  const { company_id, token } = req.body;
+  console.log(company_id, token);
+  withAxios(
+    "get",
+    `https://basecamp.com/${company_id}/api/v1/projects.json`,
+    token
+  )
+    .then(projects => {
+      // console.log(profile.data);
+      res.status(200).json(projects.data);
+    })
+    .catch(err => console.log(err));
+});
+
+server.post("/get_project", (req, res) => {
+  const { company_id, project_id, token } = req.body;
+  console.log(company_id, token);
+  withAxios(
+    "get",
+    `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todolists.json`,
+    token
+  )
+    .then(project => {
+      console.log(project.data);
+      res.status(200).json(project.data);
     })
     .catch(err => console.log(err));
 });
