@@ -51,13 +51,11 @@ router.post("/get_profile", (req, res) => {
         : User.create(profile.data)
             .then(user => {
               console.log(user);
-              res
-                .status(200)
-                .json({
-                  profile: profile.data,
-                  user: user,
-                  message: "user not found on mongoDB"
-                });
+              res.status(200).json({
+                profile: profile.data,
+                user: user,
+                message: "user not found on mongoDB"
+              });
             })
             .catch(err => console.log(err.message));
     })
@@ -90,6 +88,36 @@ router.post("/get_project", (req, res) => {
     .then(project => {
       console.log(project.data);
       res.status(200).json(project.data);
+    })
+    .catch(err => console.log(err));
+});
+
+router.post("/get_todolist", (req, res) => {
+  const { company_id, project_id, token, todolist_id } = req.body;
+  console.log(company_id, token);
+  withAxios(
+    "get",
+    `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todolists/${todolist_id}.json`,
+    token
+  )
+    .then(list => {
+      console.log(list.data);
+      res.status(200).json(list.data);
+    })
+    .catch(err => console.log(err));
+});
+
+router.post("/get_todos", (req, res) => {
+  const { company_id, project_id, token, todo_id } = req.body;
+  console.log(company_id, token);
+  withAxios(
+    "get",
+    `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todos/${todo_id}.json`,
+    token
+  )
+    .then(todo => {
+      console.log(todo.data);
+      res.status(200).json(todo.data);
     })
     .catch(err => console.log(err));
 });
