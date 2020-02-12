@@ -21,7 +21,7 @@ router.get("/get_token", (req, res) => {
       )
         // Send token and user id to front-end app
         .then(profile => {
-          console.log(profile);
+          // console.log(profile);
           res.status(200).json({
             access_token: token.data.access_token,
             company_id: profile.data.accounts[0].id,
@@ -33,9 +33,32 @@ router.get("/get_token", (req, res) => {
     .catch(err => console.log(err));
 });
 
+router.post("/my_todos", (req, res) => {
+  const { token, url } = req.body;
+  console.log(url);
+  url
+    ? axios({
+        method: "GET",
+        url: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "application/json",
+          "User-Agent": "Todo Templates (rodean.fraser@yourdigitalresource.com)"
+        }
+      })
+        .then(todos => {
+          console.log(todos.data);
+          res.status(200).json(todos.data);
+        })
+        .catch(err => {
+          res.status(500).json(err.message);
+        })
+    : null;
+});
+
 router.post("/get_profile", (req, res) => {
   const { company_id, token } = req.body;
-  console.log(company_id, token);
+  // console.log(company_id, token);
   withAxios(
     "get",
     `https://basecamp.com/${company_id}/api/v1/people/me.json`,
@@ -50,7 +73,7 @@ router.post("/get_profile", (req, res) => {
             .json({ profile: profile.data, message: "user found on mongoDB" })
         : User.create(profile.data)
             .then(user => {
-              console.log(user);
+              // console.log(user);
               res.status(200).json({
                 profile: profile.data,
                 user: user,
@@ -64,7 +87,7 @@ router.post("/get_profile", (req, res) => {
 
 router.post("/get_projects", (req, res) => {
   const { company_id, token } = req.body;
-  console.log(company_id, token);
+  // console.log(company_id, token);
   withAxios(
     "get",
     `https://basecamp.com/${company_id}/api/v1/projects.json`,
@@ -79,14 +102,14 @@ router.post("/get_projects", (req, res) => {
 
 router.post("/get_project", (req, res) => {
   const { company_id, project_id, token } = req.body;
-  console.log(company_id, token);
+  // console.log(company_id, token);
   withAxios(
     "get",
     `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todolists.json`,
     token
   )
     .then(project => {
-      console.log(project.data);
+      // console.log(project.data);
       res.status(200).json(project.data);
     })
     .catch(err => console.log(err));
@@ -94,14 +117,14 @@ router.post("/get_project", (req, res) => {
 
 router.post("/get_todolist", (req, res) => {
   const { company_id, project_id, token, todolist_id } = req.body;
-  console.log(company_id, token);
+  // console.log(company_id, token);
   withAxios(
     "get",
     `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todolists/${todolist_id}.json`,
     token
   )
     .then(list => {
-      console.log(list.data);
+      // console.log(list.data);
       res.status(200).json(list.data);
     })
     .catch(err => console.log(err));
@@ -109,15 +132,34 @@ router.post("/get_todolist", (req, res) => {
 
 router.post("/get_todos", (req, res) => {
   const { company_id, project_id, token, todo_id } = req.body;
-  console.log(company_id, token);
+  // console.log(company_id, token);
   withAxios(
     "get",
     `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todos/${todo_id}.json`,
     token
   )
     .then(todo => {
-      console.log(todo.data);
+      // console.log(todo.data);
       res.status(200).json(todo.data);
+    })
+    .catch(err => console.log(err));
+});
+
+router.post("/add_comment", (req, res) => {
+  const { company_id, project_id, token, todo_id, data, url } = req.body;
+  console.log(data);
+  console.log(url);
+  const comment = { content: data };
+  // console.log(company_id, token);
+  withAxios(
+    "post",
+    `https://basecamp.com/${company_id}/api/v1/projects/${project_id}/todos/${todo_id}/comments.json`,
+    token,
+    comment
+  )
+    .then(todo => {
+      // console.log(todo.data);
+      res.status(201).json(todo.data);
     })
     .catch(err => console.log(err));
 });
@@ -143,7 +185,7 @@ function withAxios(method, url, token, data = {}) {
 }
 
 router.post("/auth_token", (req, res) => {
-  console.log(req.body.token, req.body.url);
+  // console.log(req.body.token, req.body.url);
   withAxios("post", req.body.url, req.body.token, req.body.package)
     .then(response => res.status(200).json(response.data))
     .catch(err => res.status(500).json(err));
